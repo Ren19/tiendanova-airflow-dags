@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: marts_ventas_netas
+    description: >
+      Ventas netas de TiendaNova por sucursal y dia. Fuente unica de verdad
+      para reportes de directorio y dashboards de Business Intelligence.
+    columns:
+      - name: id_sucursal
+        tests:
+          - not_null
+      - name: fecha_venta
+        tests:
+          - not_null
+      - name: ventas_netas
+        description: Nunca deberia ser negativo -- si lo es, algo esta mal aguas arriba.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+              config:
+                severity: error

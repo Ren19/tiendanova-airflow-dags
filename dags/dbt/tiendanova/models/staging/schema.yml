@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: stg_ventas
+    description: Ventas de TiendaNova limpias, una fila por transaccion.
+    columns:
+      - name: id_venta
+        description: Identificador unico de la venta.
+        tests:
+          - not_null
+          - unique
+      - name: id_sucursal
+        description: Codigo de la sucursal.
+        tests:
+          - not_null
+      - name: monto_neto
+        description: monto_bruto menos monto_descuento. Nunca deberia ser negativo.
+        tests:
+          - not_null

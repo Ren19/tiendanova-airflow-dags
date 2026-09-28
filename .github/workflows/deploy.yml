@@ -1,0 +1,46 @@
+name: CD - Despliegue a produccion
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  esperar-ci:
+    runs-on: ubuntu-latest
+    # Vuelve a correr los mismos checks sobre el commit que llego a main,
+    # como ultimo candado antes de tocar produccion. Es redundante con
+    # el CI del PR a proposito: nunca confiamos ciegamente en que "ya se probo".
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - run: ruff check dags/ tests/
+      - run: pytest tests/ -v
+
+  desplegar:
+    needs: esperar-ci
+    runs-on: ubuntu-latest
+    # needs: esperar-ci -> este job SOLO corre si el anterior termino verde.
+    # Es la implementacion concreta de "CD dispara solo si el CI paso".
+    environment: produccion
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sincronizar dags/ al repositorio que observa git-sync
+        env:
+          DEPLOY_KEY: ${{ secrets.PRODUCCION_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan git.tiendanova.internal >> ~/.ssh/known_hosts
+          git remote add produccion git@git.tiendanova.internal:airflow/dags-sync.git
+          git push produccion HEAD:main --force-with-lease
+
+      - name: Confirmar despliegue
+        run: echo "DAGs sincronizados a produccion -- el scheduler los recogera en su proximo ciclo de parseo."

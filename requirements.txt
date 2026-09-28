@@ -1,0 +1,9 @@
+# --- Clase 6 (produccion) ---
+apache-airflow==3.0.0
+apache-airflow-providers-standard
+pendulum
+
+# --- Clase 7: Dbt + Snowflake + Cosmos ---
+apache-airflow-providers-snowflake
+astronomer-cosmos[dbt-snowflake]==1.*
+dbt-snowflake==1.*

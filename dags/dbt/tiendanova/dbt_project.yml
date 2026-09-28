@@ -1,0 +1,19 @@
+name: 'tiendanova'
+version: '1.0.0'
+config-version: 2
+profile: 'tiendanova'
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  tiendanova:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts

@@ -1,0 +1,19 @@
+# profiles.yml — leido por dbt (y por Cosmos en tiempo de ejecucion dentro
+# del contenedor de Airflow). Las credenciales NUNCA se escriben aqui: se
+# leen de variables de entorno definidas en docker-compose.yaml / .env
+# (ver .env.example), exactamente igual que la Connection snowflake_default
+# de Airflow separa credenciales del codigo del DAG.
+
+tiendanova:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: ROLE_TIENDANOVA
+      database: TIENDANOVA_DB
+      warehouse: WH_TIENDANOVA
+      schema: STAGING
+      threads: 4

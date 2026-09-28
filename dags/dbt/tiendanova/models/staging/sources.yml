@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: raw
+    database: TIENDANOVA_DB
+    schema: RAW
+    tables:
+      - name: ventas
+        description: >
+          Ventas crudas, una fila por transaccion, cargadas por el DAG
+          ingesta_sucursales_v2 (Clase 5/6) directamente desde las 8
+          sucursales de TiendaNova. Sin limpiar: puede traer nulos,
+          nombres de columna poco claros y duplicados.
+        columns:
+          - name: id_venta
+            description: Identificador de la transaccion en el sistema origen.
+          - name: id_sucursal
+            description: Codigo de la sucursal que genero la venta.
+          - name: fecha_venta
+            description: Fecha de la venta en la sucursal (hora local de Lima).
+          - name: monto_bruto
+            description: Monto de la venta antes de descuentos ni devoluciones.
+          - name: monto_descuento
+            description: Descuento aplicado a la venta, si hubo.

@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Generados/locales de Docker — no van al repositorio
+logs/
+.env
+
+# Artefactos de dbt
+dags/dbt/tiendanova/target/
+dags/dbt/tiendanova/dbt_packages/
+dags/dbt/tiendanova/logs/

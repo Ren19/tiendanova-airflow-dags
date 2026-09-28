@@ -1,0 +1,29 @@
+name: CI - TiendaNova DAGs
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Lint con ruff
+        run: ruff check dags/ tests/
+
+      - name: Tests con pytest (estructurales + unitarios)
+        run: pytest tests/ -v
