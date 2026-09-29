@@ -20,7 +20,12 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
       - run: ruff check dags/ tests/
+      - run: airflow db migrate
       - run: pytest tests/ -v
+        env:
+          SNOWFLAKE_ACCOUNT: ci-dummy
+          SNOWFLAKE_USER: ci-dummy
+          SNOWFLAKE_PASSWORD: ci-dummy
 
   desplegar:
     needs: esperar-ci
