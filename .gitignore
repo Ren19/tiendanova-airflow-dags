@@ -10,3 +10,10 @@ logs/
 dags/dbt/tiendanova/target/
 dags/dbt/tiendanova/dbt_packages/
 dags/dbt/tiendanova/logs/
+
+# Llaves SSH / secretos — nunca al repositorio
+deploy_key
+deploy_key.pub
+*.pem
+id_rsa*
+id_ed25519*
