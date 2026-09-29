@@ -25,5 +25,15 @@ jobs:
       - name: Lint con ruff
         run: ruff check dags/ tests/
 
+      - name: Inicializar metadata DB de Airflow (SQLite local)
+        run: airflow db migrate
+
       - name: Tests con pytest (estructurales + unitarios)
+        # Cosmos ejecuta "dbt ls" al parsear el DAG y dbt exige que las
+        # env vars del profiles.yml existan. No se conecta a Snowflake,
+        # por eso basta con valores ficticios.
+        env:
+          SNOWFLAKE_ACCOUNT: ci-dummy
+          SNOWFLAKE_USER: ci-dummy
+          SNOWFLAKE_PASSWORD: ci-dummy
         run: pytest tests/ -v

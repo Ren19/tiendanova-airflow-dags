@@ -5,20 +5,24 @@
 # dentro de un solo BashOperator, que es una caja negra).
 
 from datetime import datetime
+from pathlib import Path
 
-from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
+from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig
+from cosmos.constants import ExecutionMode
 from airflow.sdk import dag
 
-DBT_PROJECT_DIR = "/opt/airflow/dags/dbt/tiendanova"
+# Ruta relativa a este archivo: funciona igual en el contenedor
+# (/opt/airflow/dags/...) que en el runner de CI o en local.
+DBT_PROJECT_DIR = Path(__file__).resolve().parent / "dbt" / "tiendanova"
 
 profile_config = ProfileConfig(
     profile_name="tiendanova",
     target_name="dev",
-    profiles_yml_filepath=f"{DBT_PROJECT_DIR}/profiles.yml",
+    profiles_yml_filepath=DBT_PROJECT_DIR / "profiles.yml",
 )
 
 execution_config = ExecutionConfig(
-    execution_mode="local",  # dbt corre dentro del mismo contenedor de Airflow
+    execution_mode=ExecutionMode.LOCAL,  # dbt corre dentro del mismo contenedor de Airflow
 )
 
 

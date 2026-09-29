@@ -22,9 +22,13 @@ def test_no_hay_errores_de_import(dagbag: DagBag):
     assert len(dagbag.import_errors) == 0, f"DAGs con errores de import: {dagbag.import_errors}"
 
 
-@pytest.mark.parametrize("dag_id", ["ingesta_sucursales_v2", "reporte_consolidado"])
+@pytest.mark.parametrize(
+    "dag_id", ["ingesta_sucursales_v2", "reporte_consolidado", "dag_transformacion_ventas"]
+)
 def test_dag_existe_y_carga(dagbag: DagBag, dag_id: str):
-    dag = dagbag.get_dag(dag_id)
+    # dagbag.dags en vez de get_dag(): get_dag consulta la metadata DB de
+    # Airflow, que no existe en CI. Un test estructural no necesita DB.
+    dag = dagbag.dags.get(dag_id)
     assert dag is not None, f"{dag_id} no se pudo cargar desde dags/"
 
 
@@ -46,7 +50,7 @@ def test_todas_las_tasks_tienen_retries(dagbag: DagBag):
 def test_no_hay_ciclos_ni_dags_duplicados(dagbag: DagBag):
     # dagbag.dags ya deduplica por dag_id: si el conteo de archivos
     # procesados no coincide con lo esperado, algo se esta pisando.
-    assert len(dagbag.dags) == 2, f"Se esperaban 2 DAGs, se encontraron {len(dagbag.dags)}"
+    assert len(dagbag.dags) == 3, f"Se esperaban 3 DAGs, se encontraron {len(dagbag.dags)}"
 
 
 # ======================================================================
